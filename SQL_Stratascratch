@@ -1,0 +1,102 @@
+1.	Find the number of workers by department who joined on or after April 1, 2014.
+       Output the department name along with the corresponding number of workers.
+       Sort the results based on the number of workers in descending order.
+       Table – worker
+
+       SELECT department, COUNT (worker_id) AS num_workers
+       FROM worker
+       WHERE EXTRACT (MONTH FROM joining_date) >= 4
+       GROUP BY department
+       ORDER BY COUNT (worker_id) DESC
+
+2.	Find how many times each artist appeared on the Spotify ranking list. Output the artist name along with the corresponding number of occurrences. Order records by the number of occurrences in descending order.
+
+Table - spotify_worldwide_daily_song_ranking
+
+SELECT artist, COUNT (streams)
+FROM spotify_worldwide_daily_song_ranking
+GROUP BY artist
+ORDER BY COUNT (streams) DESC;
+
+3.	Count the number of movies for which Abigail Breslin was nominated for an Oscar.
+
+Table - oscar_nominees
+
+SELECT COUNT (*) AS n_movies_by_abi
+FROM oscar_nominees
+WHERE nominee = 'Abigail Breslin';
+
+4.	We have a table with employees and their salaries, however, some of the records are old and contain outdated salary information. Find the current salary of each employee 
+assuming that salaries increase each year. Output their id, first name, last name, department ID, and current salary. Order your list by employee ID in ascending order.
+
+Table - ms_employee_salary
+
+SELECT id, first_name, last_name, department_id, MAX (salary) AS current_salary
+FROM ms_employee_salary
+GROUP BY id, first_name, last_name, department_id
+ORDER BY id;
+
+5.	You're tasked with analyzing a Spotify-like dataset that captures user listening habits. For each user, calculate the total listening time and the count of unique songs they've listened to. In the 
+database duration values are displayed in seconds. Round the total listening duration to the nearest whole minute.
+The output should contain three columns - user_id', 'total_listen_duration', and 'unique_song_count'.
+
+Table - listening_habits
+
+SELECT user_id, ROUND (SUM (listen_duration)/ 60.0) AS total_listen_dutation, 
+COUNT (DISTINCT song_id)
+FROM listening_habits
+GROUP BY user_id;
+
+6.	Write a query that returns the number of unique users per client per month.
+
+Table - fact_events
+
+SELECT DISTINCT client_id, EXTRACT (MONTH FROM time_id) AS month,
+COUNT (DISTINCT user_id) AS user_num
+FROM fact_events
+GROUP BY client_id, EXTRACT (MONTH FROM time_id);
+
+7.	Write a query that will calculate the number of shipments per month. The unique key for one shipment is a combination of shipment_id and sub_id. Output the year_month in format YYYY-MM and the number of shipments in that month.
+
+Table - amazon_shipment
+
+SELECT TO_CHAR (shipment_date, 'YYYY-MM') AS year_month,
+COUNT (DISTINCT (shipment_id, sub_id))
+FROM amazon_shipment
+GROUP BY TO_CHAR (shipment_date, 'YYYY-MM');
+
+8.	You have been asked to find the 5 most lucrative products in terms of total revenue for the first half of 2022 (from January to June inclusive).
+
+Output their IDs and the total revenue.
+
+
+Table - online_orders
+
+SELECT product_id, SUM (cost_in_dollars * units_sold) AS Total_Revenue
+FROM online_orders
+WHERE date_sold BETWEEN '2022-01-01' AND '2022-06-30'
+GROUP BY product_id
+ORDER BY Total_Revenue DESC
+LIMIT 5;
+
+9.	Find the average number of bathrooms and bedrooms for each city’s property types. Output the result along with the city name and the property type.
+
+Table - airbnb_search_details
+
+SELECT city, property_type,
+AVG (bathrooms) AS n_bathrooms_avg,
+AVG (bedrooms) AS n_bedrooms_avg
+FROM airbnb_search_details
+GROUP BY city, property_type;
+
+10.	You are given a dataset of health inspections that includes details about violations. Each row represents an inspection, and if an inspection resulted in a violation, the violation_id column will contain a value.
+Count the total number of violations that occurred at 'Roxanne Cafe' for each year, based on the inspection date. Output the year and the corresponding number of violations in ascending order of the year.
+
+Table - sf_restaurant_health_violations
+
+SELECT EXTRACT (YEAR FROM inspection_date) AS inspection_year,
+COUNT (violation_id) AS n_violations
+FROM sf_restaurant_health_violations
+WHERE business_name = 'Roxanne Cafe'
+GROUP BY EXTRACT (YEAR FROM inspection_date) 
+ORDER BY EXTRACT (YEAR FROM inspection_date) ASC;
